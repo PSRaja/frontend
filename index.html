@@ -146,71 +146,72 @@
   </div>
 
 <script>
-  let isLogin = true;
+let isLogin = true;
 
-  function toggleForm() {
-    isLogin = !isLogin;
-    document.getElementById("loginForm").classList.toggle("hidden");
-    document.getElementById("registerForm").classList.toggle("hidden");
-    document.getElementById("title").innerText = isLogin ? "Login" : "Register";
-    document.getElementById("switchText").innerText = 
-      isLogin ? "Don't have an account? Register" : "Already have an account? Login";
-    document.getElementById("msg").innerText = "";
+function toggleForm() {
+  isLogin = !isLogin;
+  document.getElementById("loginForm").classList.toggle("hidden");
+  document.getElementById("registerForm").classList.toggle("hidden");
+  document.getElementById("title").innerText = isLogin ? "Login" : "Register";
+  document.getElementById("switchText").innerText =
+    isLogin ? "Don't have an account? Register" : "Already have an account? Login";
+  document.getElementById("msg").innerText = "";
+}
+
+async function login() {
+  const email = document.getElementById("loginId").value;
+  const password = document.getElementById("loginPassword").value;
+  const msg = document.getElementById("msg");
+
+  msg.textContent = "Logging in...";
+
+  const res = await fetch("https://backend-1-kkqs.onrender.com/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+
+  const data = await res.json();
+
+  if (res.ok) {
+    msg.textContent = "Login successful!";
+    msg.className = "message success";
+  } else {
+    msg.textContent = data.message || "Login failed";
+  }
+}
+
+async function register() {
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+  const confirmPassword = document.getElementById("regConfirmPassword").value;
+  const msg = document.getElementById("msg");
+
+  if (password !== confirmPassword) {
+    msg.textContent = "Passwords do not match";
+    return;
   }
 
-  async function login() {
-    const email = document.getElementById("loginId").value;   // ✅ fixed
-    const password = document.getElementById("loginPassword").value;
-    const msg = document.getElementById("msg");
+  msg.textContent = "Registering...";
 
-    msg.textContent = "Logging in...";
+  const res = await fetch("https://backend-1-kkqs.onrender.com/auth/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
 
-    const res = await fetch(""https://backend-1-kkqs.onrender.com/auth/register"", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
+  const data = await res.json();
 
-    const data = await res.json();
-
-    if (res.ok) {
-      msg.textContent = "Login successful!";
-      msg.className = "message success";
-    } else {
-      msg.textContent = data.message || "Login failed";
-    }
+  if (res.ok) {
+    msg.textContent = "Registration successful! Please login.";
+    msg.className = "message success";
+    toggleForm();
+  } else {
+    msg.textContent = data.message || "Registration failed";
   }
-
-  async function register() {
-    const email = document.getElementById("loginId").value;
-    const password = document.getElementById("regPassword").value;
-    const confirmPassword = document.getElementById("regConfirmPassword").value;
-    const msg = document.getElementById("msg");
-
-    if (password !== confirmPassword) {
-      msg.textContent = "Passwords do not match";
-      return;
-    }
-
-    msg.textContent = "Registering...";
-
-    const res = await fetch("https://backend-1-kkqs.onrender.com/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      msg.textContent = "Registration successful! Please login.";
-      msg.className = "message success";
-      toggleForm();
-    } else {
-      msg.textContent = data.message || "Registration failed";
-    }
-  }
+}
 </script>
+
 
 
 </body>
