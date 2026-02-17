@@ -142,41 +142,75 @@ function toggleForm() {
     : "Login";
   document.getElementById("msg").innerText = "";
 }
+let otpSent = false;
 
-function handleRegister() {
-
-  const msg = document.getElementById("msg");
-  const btn = document.getElementById("registerBtn");
+async function handleRegister() {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
   const otpBox = document.getElementById("otpBox");
+  const btn = document.getElementById("registerBtn");
+  const msg = document.getElementById("msg");
 
   if (!otpSent) {
+    try {
+      const response = await fetch(
+        "https://backend-1-kkqs.onrender.com/auth/send-otp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
 
-    // Simulate OTP sending
-    generatedOtp = Math.floor(100000 + Math.random() * 900000);
-    console.log("Generated OTP:", generatedOtp);
+      const data = await response.json();
 
-    otpBox.classList.remove("hidden");
-    btn.innerText = "Verify OTP";
-
-    msg.innerText = "OTP sent to your Email ID!";
-    msg.className = "message success";
-
-    otpSent = true;
-
-  } else {
-
-    const enteredOtp = document.getElementById("otp").value;
-
-    if (enteredOtp == generatedOtp) {
-      msg.innerText = "Registration Successful!";
-      msg.className = "message success";
-    } else {
-      msg.innerText = "Invalid OTP!";
+      if (response.ok) {
+        msg.innerText = "OTP sent to your email!";
+        msg.className = "message success";
+        otpBox.classList.remove("hidden");
+        btn.innerText = "Verify OTP";
+        otpSent = true;
+      } else {
+        msg.innerText = data.message || "Error sending OTP";
+        msg.className = "message";
+      }
+    } catch (error) {
+      msg.innerText = "Server error!";
       msg.className = "message";
     }
+  } else {
+    const otp = document.getElementById("otp").value;
 
+    try {
+      const response = await fetch(
+        "https://backend-1-kkqs.onrender.com/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password, otp }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        msg.innerText = "Registration successful!";
+        msg.className = "message success";
+      } else {
+        msg.innerText = data.message;
+        msg.className = "message";
+      }
+    } catch (error) {
+      msg.innerText = "Server error!";
+      msg.className = "message";
+    
   }
 }
+
 
 </script>
 
