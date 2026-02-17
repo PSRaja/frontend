@@ -1,218 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Login & Register</title>
-<style>
-* {
-  box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, sans-serif;
-}
-
-body {
-  margin: 0;
-  height: 100vh;
-  background: linear-gradient(135deg, #4f46e5, #06b6d4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.card {
-  background: white;
-  width: 380px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  padding: 30px;
-  text-align: center;
-}
-
-h2 {
-  margin-bottom: 20px;
-}
-
-.form-group {
-  text-align: left;
-  margin-bottom: 15px;
-}
-
-input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  background: #4f46e5;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-button:hover {
-  background: #4338ca;
-}
-
-.hidden {
-  display: none;
-}
-
-.message {
-  margin-top: 10px;
-  font-size: 14px;
-  color: red;
-}
-
-.success {
-  color: green;
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Auth App</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="card">
-<h2 id="title">Login</h2>
+  <h2 id="formTitle">Login</h2>
 
-<!-- LOGIN FORM -->
-<div id="loginForm">
-  <div class="form-group">
-    <input type="email" placeholder="Email ID">
+  <!-- LOGIN FORM -->
+  <div id="loginForm">
+    <input type="email" id="loginEmail" placeholder="Email ID">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button onclick="login()">Login</button>
   </div>
 
-  <div class="form-group">
-    <input type="password" placeholder="Password">
-  </div>
-
-  <button>Login</button>
-</div>
-
-<!-- REGISTER FORM -->
-<div id="registerForm" class="hidden">
-
-  <div class="form-group">
+  <!-- REGISTER FORM -->
+  <div id="registerForm" class="hidden">
     <input type="text" id="firstName" placeholder="First Name">
-  </div>
-
-  <div class="form-group">
     <input type="text" id="lastName" placeholder="Last Name">
-  </div>
-
-  <div class="form-group">
     <input type="email" id="email" placeholder="Email ID">
-  </div>
-
-  <div class="form-group">
     <input type="password" id="password" placeholder="Password">
+
+    <div id="otpSection" class="hidden">
+      <input type="text" id="otp" placeholder="Enter OTP">
+    </div>
+
+    <button id="registerBtn" onclick="handleRegister()">Create Account</button>
   </div>
 
-  <div class="form-group hidden" id="otpBox">
-    <input type="text" id="otp" placeholder="Enter OTP">
-  </div>
+  <p id="message"></p>
 
-  <button id="registerBtn" onclick="handleRegister()">Create Account</button>
-
+  <p class="switch" onclick="toggleForm()">
+    Switch Login / Register
+  </p>
 </div>
 
-<div id="msg" class="message"></div>
-
-<p onclick="toggleForm()" style="cursor:pointer; margin-top:15px; color:#4f46e5;">
-  Switch Login / Register
-</p>
-
-</div>
-
-<script>
-
-let otpSent = false;
-let generatedOtp = "";
-
-function toggleForm() {
-  document.getElementById("loginForm").classList.toggle("hidden");
-  document.getElementById("registerForm").classList.toggle("hidden");
-  document.getElementById("title").innerText =
-    document.getElementById("title").innerText === "Login"
-    ? "Register"
-    : "Login";
-  document.getElementById("msg").innerText = "";
-}
-let otpSent = false;
-
-async function handleRegister() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const otpBox = document.getElementById("otpBox");
-  const btn = document.getElementById("registerBtn");
-  const msg = document.getElementById("msg");
-
-  if (!otpSent) {
-    try {
-      const response = await fetch(
-        "https://backend-1-kkqs.onrender.com/auth/send-otp",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        msg.innerText = "OTP sent to your email!";
-        msg.className = "message success";
-        otpBox.classList.remove("hidden");
-        btn.innerText = "Verify OTP";
-        otpSent = true;
-      } else {
-        msg.innerText = data.message || "Error sending OTP";
-        msg.className = "message";
-      }
-    } catch (error) {
-      msg.innerText = "Server error!";
-      msg.className = "message";
-    }
-  } else {
-    const otp = document.getElementById("otp").value;
-
-    try {
-      const response = await fetch(
-        "https://backend-1-kkqs.onrender.com/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password, otp }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        msg.innerText = "Registration successful!";
-        msg.className = "message success";
-      } else {
-        msg.innerText = data.message;
-        msg.className = "message";
-      }
-    } catch (error) {
-      msg.innerText = "Server error!";
-      msg.className = "message";
-    
-  }
-}
-
-
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
