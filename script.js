@@ -82,7 +82,12 @@ async function login() {
 
     if (res.ok) {
       message.innerText = "Login successful!";
-      localStorage.setItem("token", data.token);
+       // Save token if backend sends it
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+      //  Redirect to new page
+      window.location.href = "video.html";
     } else {
       message.innerText = data.message;
     }
