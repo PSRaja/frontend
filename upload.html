@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Page</title>
+</head>
+<body>
+
+  <h2>Upload Video / Photo</h2>
+
+  <form id="uploadForm">
+    <input type="file" name="file" required />
+    <button type="submit">Upload</button>
+  </form>
+
+  <script>
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      formData.append("file", e.target.file.files[0]);
+
+      await fetch("https://your-backend-url/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      alert("Uploaded Successfully!");
+    });
+  </script>
+
+  <br>
+  <a href="dashboard.html">Back to Dashboard</a>
+
+</body>
+</html>

@@ -87,7 +87,7 @@ async function login() {
         localStorage.setItem("token", data.token);
       }
       //  Redirect to new page
-      window.location.href = "video.html";
+      window.location.href = "dashboard.html";
     } else {
       message.innerText = data.message;
     }
