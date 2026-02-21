@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Secure Auth System</title>
+<title>Secure Login</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -12,7 +12,7 @@
   margin:0;
   padding:0;
   box-sizing:border-box;
-  font-family: 'Segoe UI', sans-serif;
+  font-family:'Segoe UI',sans-serif;
 }
 
 body{
@@ -20,98 +20,126 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  background: linear-gradient(135deg,#4f46e5,#06b6d4);
+  background:linear-gradient(135deg,#6366f1,#06b6d4);
 }
 
 .card{
-  background:#fff;
-  padding:30px;
   width:380px;
-  border-radius:15px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  padding:35px;
+  border-radius:20px;
+  backdrop-filter:blur(20px);
+  background:rgba(255,255,255,0.15);
+  box-shadow:0 15px 35px rgba(0,0,0,0.2);
+  color:#fff;
 }
 
 h2{
   text-align:center;
-  margin-bottom:20px;
+  margin-bottom:25px;
+  font-weight:600;
 }
 
 .input-group{
   position:relative;
-  margin-bottom:15px;
+  margin-bottom:22px;
 }
 
-input{
+.input-group input{
   width:100%;
-  padding:12px 40px 12px 12px;
-  border-radius:8px;
-  border:1px solid #ccc;
+  padding:14px 45px 14px 12px;
+  border-radius:10px;
+  border:none;
   outline:none;
+  font-size:14px;
+  background:rgba(255,255,255,0.2);
+  color:#fff;
   transition:0.3s;
 }
 
-input:focus{
-  border-color:#4f46e5;
+.input-group input::placeholder{
+  color:rgba(255,255,255,0.7);
 }
 
-.input-group i{
+.input-group input:focus{
+  background:rgba(255,255,255,0.3);
+}
+
+.toggle-password{
   position:absolute;
   right:12px;
   top:50%;
   transform:translateY(-50%);
   cursor:pointer;
-  color:#777;
+  font-size:14px;
+  color:#fff;
+}
+
+.remember-container{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+  margin-bottom:20px;
+}
+
+.remember-container label{
+  display:flex;
+  align-items:center;
+  cursor:pointer;
+}
+
+.remember-container input{
+  margin-right:6px;
+  accent-color:#06b6d4;
+}
+
+.remember-container a{
+  text-decoration:none;
+  color:#fff;
+  opacity:0.9;
+}
+
+.remember-container a:hover{
+  text-decoration:underline;
 }
 
 button{
   width:100%;
-  padding:12px;
+  padding:14px;
   border:none;
-  border-radius:8px;
-  background:#4f46e5;
-  color:white;
-  font-weight:bold;
+  border-radius:12px;
+  background:#fff;
+  color:#6366f1;
+  font-weight:600;
   cursor:pointer;
   transition:0.3s;
 }
 
 button:hover{
-  background:#3730a3;
+  transform:translateY(-2px);
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 
-.extra{
-  display:flex;
-  justify-content:space-between;
-  font-size:13px;
-  margin-bottom:15px;
+.switch{
+  text-align:center;
+  margin-top:18px;
+  font-size:14px;
+  cursor:pointer;
+  opacity:0.9;
 }
 
-.extra a{
-  text-decoration:none;
-  color:#4f46e5;
+.switch:hover{
+  text-decoration:underline;
 }
 
 .hidden{
   display:none;
 }
 
-.switch{
-  text-align:center;
-  margin-top:15px;
-  cursor:pointer;
-  color:#4f46e5;
-  font-size:14px;
-}
-
 #message{
   text-align:center;
   margin-top:10px;
-  font-size:14px;
-}
-
-.loading{
-  opacity:0.7;
-  pointer-events:none;
+  font-size:13px;
 }
 </style>
 </head>
@@ -125,20 +153,23 @@ button:hover{
 <div id="loginForm">
 
   <div class="input-group">
-    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="email" id="loginEmail" placeholder="Email Address" required>
   </div>
 
   <div class="input-group">
     <input type="password" id="loginPassword" placeholder="Password" required>
-    <i class="fa-solid fa-eye" onclick="togglePassword('loginPassword',this)"></i>
+    <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('loginPassword', this)"></i>
   </div>
 
-  <div class="extra">
-    <label><input type="checkbox" id="remember"> Remember me</label>
+  <div class="remember-container">
+    <label>
+      <input type="checkbox" id="rememberMe">
+      Remember Me
+    </label>
     <a href="#">Forgot Password?</a>
   </div>
 
-  <button onclick="login()" id="loginBtn">Login</button>
+  <button onclick="login()">Login</button>
 
 </div>
 
@@ -154,33 +185,41 @@ button:hover{
   </div>
 
   <div class="input-group">
-    <input type="email" id="email" placeholder="Email" required>
+    <input type="email" id="email" placeholder="Email Address" required>
   </div>
 
   <div class="input-group">
     <input type="password" id="password" placeholder="Password" required>
-    <i class="fa-solid fa-eye" onclick="togglePassword('password',this)"></i>
+    <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
   </div>
 
-  <!-- OTP SECTION -->
-  <div id="otpSection" class="hidden">
-    <div class="input-group">
-      <input type="text" id="otp" placeholder="Enter OTP">
-    </div>
-  </div>
-
-  <button onclick="handleRegister()" id="registerBtn">Create Account</button>
+  <button onclick="handleRegister()">Create Account</button>
 
 </div>
 
 <p id="message"></p>
 
-<p class="switch" onclick="toggleForm()">
-Switch to Register / Login
-</p>
+<p class="switch" onclick="toggleForm()">Switch Login / Register</p>
 
 </div>
 
+<script>
+function togglePassword(fieldId, icon){
+  const input = document.getElementById(fieldId);
+
+  if(input.type === "password"){
+    input.type = "text";
+    icon.classList.remove("fa-eye");
+    icon.classList.add("fa-eye-slash");
+  } else {
+    input.type = "password";
+    icon.classList.remove("fa-eye-slash");
+    icon.classList.add("fa-eye");
+  }
+}
+</script>
+
 <script src="script.js"></script>
+
 </body>
 </html>
