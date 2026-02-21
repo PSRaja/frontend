@@ -105,7 +105,7 @@ async function login() {
         localStorage.setItem("userName", data.name);
       }
 
-      window.location.href = "dashboard.html";
+      window.location.href = "dashboards.html";
     } else {
       message.innerText = data.message || "Login failed";
     }
