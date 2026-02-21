@@ -1,6 +1,15 @@
-const BASE_URL = "https://backend-1-kkqs.onrender.com/auth";
+/* ================================
+   BASE CONFIG
+================================ */
+
+const BASE_URL = "https://backend-1-kkqs.onrender.com";
+const AUTH_URL = `${BASE_URL}/auth`;
 
 let otpSent = false;
+
+/* ================================
+   FORM TOGGLE
+================================ */
 
 function toggleForm() {
   document.getElementById("loginForm").classList.toggle("hidden");
@@ -12,6 +21,10 @@ function toggleForm() {
   document.getElementById("message").innerText = "";
 }
 
+/* ================================
+   REGISTER WITH OTP
+================================ */
+
 async function handleRegister() {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -22,7 +35,7 @@ async function handleRegister() {
 
   if (!otpSent) {
     try {
-      const res = await fetch(`${BASE_URL}/send-otp`, {
+      const res = await fetch(`${AUTH_URL}/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email })
@@ -36,15 +49,14 @@ async function handleRegister() {
         btn.innerText = "Verify OTP";
         otpSent = true;
       } else {
-        message.innerText = data.message;
+        message.innerText = data.message || "Failed to send OTP";
       }
     } catch (err) {
       message.innerText = "Server error!";
     }
-
   } else {
     try {
-      const res = await fetch(`${BASE_URL}/register`, {
+      const res = await fetch(`${AUTH_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, otp: otpInput })
@@ -56,15 +68,19 @@ async function handleRegister() {
         message.innerText = "Registration successful!";
         otpSent = false;
         btn.innerText = "Create Account";
+        otpSection.classList.add("hidden");
       } else {
-        message.innerText = data.message;
+        message.innerText = data.message || "Registration failed";
       }
-
     } catch (err) {
       message.innerText = "Server error!";
     }
   }
 }
+
+/* ================================
+   LOGIN
+================================ */
 
 async function login() {
   const email = document.getElementById("loginEmail").value;
@@ -72,7 +88,7 @@ async function login() {
   const message = document.getElementById("message");
 
   try {
-    const res = await fetch(`${BASE_URL}/login`, {
+    const res = await fetch(`${AUTH_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
@@ -82,14 +98,16 @@ async function login() {
 
     if (res.ok) {
       message.innerText = "Login successful!";
-       // Save token if backend sends it
+
       if (data.token) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+        localStorage.setItem("userName", data.name);
       }
-      //  Redirect to new page
-      window.location.href = "dashboards.html";
+
+      window.location.href = "dashboard.html";
     } else {
-      message.innerText = data.message;
+      message.innerText = data.message || "Login failed";
     }
 
   } catch (err) {
@@ -97,10 +115,14 @@ async function login() {
   }
 }
 
-let mediaStream;
-let mediaRecorder;
+/* ================================
+   MEDIA CAPTURE SECTION
+================================ */
+
+let mediaStream = null;
+let mediaRecorder = null;
 let recordedChunks = [];
-let capturedBlob;
+let capturedBlob = null;
 
 /* Show Capture Section */
 function showCapture(){
@@ -109,14 +131,19 @@ function showCapture(){
 
 /* Start Camera */
 async function startCamera(){
-  mediaStream = await navigator.mediaDevices.getUserMedia({
-    video:true,
-    audio:true
-  });
+  try{
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      video:true,
+      audio:true
+    });
 
-  const video = document.getElementById("video");
-  video.srcObject = mediaStream;
-  video.style.display = "block";
+    const video = document.getElementById("video");
+    video.srcObject = mediaStream;
+    video.style.display = "block";
+
+  }catch(err){
+    alert("Camera permission denied or not available.");
+  }
 }
 
 /* Photo Mode */
@@ -131,6 +158,11 @@ function startVideoMode(){
 
 /* Capture Photo */
 function capturePhoto(){
+  if(!mediaStream){
+    alert("Start camera first!");
+    return;
+  }
+
   const video = document.getElementById("video");
   const canvas = document.getElementById("canvas");
   const context = canvas.getContext("2d");
@@ -145,11 +177,19 @@ function capturePhoto(){
 
     document.getElementById("preview").innerHTML =
       `<img src="${URL.createObjectURL(blob)}" width="100%">`;
+
+    stopCamera();   // Stop camera after photo
+
   },"image/jpeg");
 }
 
 /* Start Recording */
 function startRecording(){
+  if(!mediaStream){
+    alert("Start camera first!");
+    return;
+  }
+
   recordedChunks = [];
   mediaRecorder = new MediaRecorder(mediaStream);
 
@@ -161,8 +201,11 @@ function startRecording(){
 
   mediaRecorder.onstop = ()=>{
     capturedBlob = new Blob(recordedChunks,{type:"video/webm"});
+
     document.getElementById("preview").innerHTML =
       `<video src="${URL.createObjectURL(capturedBlob)}" controls width="100%"></video>`;
+
+    stopCamera();
   };
 
   mediaRecorder.start();
@@ -170,10 +213,23 @@ function startRecording(){
 
 /* Stop Recording */
 function stopRecording(){
-  mediaRecorder.stop();
+  if(mediaRecorder && mediaRecorder.state !== "inactive"){
+    mediaRecorder.stop();
+  }
 }
 
-/* Upload */
+/* Stop Camera */
+function stopCamera(){
+  if(mediaStream){
+    mediaStream.getTracks().forEach(track => track.stop());
+    mediaStream = null;
+  }
+}
+
+/* ================================
+   UPLOAD TO BACKEND
+================================ */
+
 async function uploadCaptured(){
   if(!capturedBlob){
     alert("Capture something first!");
@@ -185,13 +241,25 @@ async function uploadCaptured(){
 
   const token = localStorage.getItem("token");
 
-  await fetch("https://your-backend-url/upload",{
-    method:"POST",
-    headers:{
-      Authorization:`Bearer ${token}`
-    },
-    body:formData
-  });
+  try{
+    const res = await fetch(`${BASE_URL}/upload`,{
+      method:"POST",
+      headers:{
+        Authorization:`Bearer ${token}`
+      },
+      body:formData
+    });
 
-  alert("Uploaded Successfully!");
+    const data = await res.json();
+
+    if(res.ok){
+      alert("Uploaded Successfully!");
+      console.log(data);
+    }else{
+      alert(data.message || "Upload failed");
+    }
+
+  }catch(err){
+    alert("Server error during upload!");
+  }
 }
