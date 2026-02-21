@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Segoe UI',sans-serif;
+}
+
+body{
+  display:flex;
+  height:100vh;
+  background:linear-gradient(135deg,#6366f1,#06b6d4);
+}
+
+/* Sidebar */
+.sidebar{
+  width:240px;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(20px);
+  color:#fff;
+  padding:20px;
+}
+
+.sidebar h2{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.sidebar ul{
+  list-style:none;
+}
+
+.sidebar ul li{
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.sidebar ul li:hover{
+  background:rgba(255,255,255,0.2);
+}
+
+/* Main Content */
+.main{
+  flex:1;
+  padding:30px;
+  color:#fff;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:30px;
+}
+
+.profile{
+  display:flex;
+  align-items:center;
+}
+
+.profile img{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  margin-right:10px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+}
+
+.card{
+  padding:20px;
+  border-radius:15px;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(20px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+.card h3{
+  margin-bottom:10px;
+}
+
+.logout{
+  padding:8px 15px;
+  background:#fff;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:600;
+  color:#6366f1;
+}
+
+.logout:hover{
+  transform:translateY(-2px);
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2>MyApp</h2>
+  <ul>
+    <li><i class="fa fa-home"></i> Dashboard</li>
+    <li><i class="fa fa-user"></i> Profile</li>
+    <li><i class="fa fa-image"></i> Gallery</li>
+    <li><i class="fa fa-cog"></i> Settings</li>
+  </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+  <div class="topbar">
+    <h1>Welcome, <span id="userName">User</span> 👋</h1>
+    <div class="profile">
+      <img src="https://i.pravatar.cc/150?img=3" alt="profile">
+      <button class="logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Total Uploads</h3>
+      <p id="uploadsCount">0</p>
+    </div>
+
+    <div class="card">
+      <h3>Active Projects</h3>
+      <p>3</p>
+    </div>
+
+    <div class="card">
+      <h3>Storage Used</h3>
+      <p>1.2 GB</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* Protect dashboard */
+const token = localStorage.getItem("token");
+if(!token){
+  window.location.href = "index.html";
+}
+
+/* Example user name load */
+document.getElementById("userName").innerText =
+  localStorage.getItem("userName") || "User";
+
+function logout(){
+  localStorage.removeItem("token");
+  localStorage.removeItem("userName");
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
