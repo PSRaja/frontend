@@ -1,44 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Auth System</title>
 
-  <meta charset="UTF-8">
-  <title>Auth App</title>
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg,#4f46e5,#06b6d4);
+}
+
+.card{
+  background:#fff;
+  padding:30px;
+  width:380px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h2{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.input-group{
+  position:relative;
+  margin-bottom:15px;
+}
+
+input{
+  width:100%;
+  padding:12px 40px 12px 12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  outline:none;
+  transition:0.3s;
+}
+
+input:focus{
+  border-color:#4f46e5;
+}
+
+.input-group i{
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  color:#777;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  background:#4f46e5;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#3730a3;
+}
+
+.extra{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  margin-bottom:15px;
+}
+
+.extra a{
+  text-decoration:none;
+  color:#4f46e5;
+}
+
+.hidden{
+  display:none;
+}
+
+.switch{
+  text-align:center;
+  margin-top:15px;
+  cursor:pointer;
+  color:#4f46e5;
+  font-size:14px;
+}
+
+#message{
+  text-align:center;
+  margin-top:10px;
+  font-size:14px;
+}
+
+.loading{
+  opacity:0.7;
+  pointer-events:none;
+}
+</style>
 </head>
 <body>
 
 <div class="card">
-  <h2 id="formTitle">Login</h2>
 
-  <!-- LOGIN FORM -->
-  <div id="loginForm">
-    <input type="email" id="loginEmail" placeholder="Email ID">
-    <input type="password" id="loginPassword" placeholder="Password">
-    <button onclick="login()">Login</button>
+<h2 id="formTitle">Login</h2>
+
+<!-- LOGIN FORM -->
+<div id="loginForm">
+
+  <div class="input-group">
+    <input type="email" id="loginEmail" placeholder="Email" required>
   </div>
 
-  <!-- REGISTER FORM -->
-  <div id="registerForm" class="hidden">
-    <input type="text" id="firstName" placeholder="First Name">
-    <input type="text" id="lastName" placeholder="Last Name">
-    <input type="email" id="email" placeholder="Email ID">
-    <input type="password" id="password" placeholder="Password">
+  <div class="input-group">
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <i class="fa-solid fa-eye" onclick="togglePassword('loginPassword',this)"></i>
+  </div>
 
-    <div id="otpSection" class="hidden">
+  <div class="extra">
+    <label><input type="checkbox" id="remember"> Remember me</label>
+    <a href="#">Forgot Password?</a>
+  </div>
+
+  <button onclick="login()" id="loginBtn">Login</button>
+
+</div>
+
+<!-- REGISTER FORM -->
+<div id="registerForm" class="hidden">
+
+  <div class="input-group">
+    <input type="text" id="firstName" placeholder="First Name" required>
+  </div>
+
+  <div class="input-group">
+    <input type="text" id="lastName" placeholder="Last Name" required>
+  </div>
+
+  <div class="input-group">
+    <input type="email" id="email" placeholder="Email" required>
+  </div>
+
+  <div class="input-group">
+    <input type="password" id="password" placeholder="Password" required>
+    <i class="fa-solid fa-eye" onclick="togglePassword('password',this)"></i>
+  </div>
+
+  <!-- OTP SECTION -->
+  <div id="otpSection" class="hidden">
+    <div class="input-group">
       <input type="text" id="otp" placeholder="Enter OTP">
     </div>
-
-    <button id="registerBtn" onclick="handleRegister()">Create Account</button>
   </div>
 
-  <p id="message"></p>
+  <button onclick="handleRegister()" id="registerBtn">Create Account</button>
 
-  <p class="switch" onclick="toggleForm()">
-    Switch Login / Register
-  </p>
+</div>
+
+<p id="message"></p>
+
+<p class="switch" onclick="toggleForm()">
+Switch to Register / Login
+</p>
+
 </div>
 
 <script src="script.js"></script>
