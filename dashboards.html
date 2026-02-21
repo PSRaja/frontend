@@ -118,7 +118,8 @@ body{
   <ul>
     <li><i class="fa fa-home"></i> Dashboard</li>
     <li><i class="fa fa-user"></i> Profile</li>
-    <li><i class="fa fa-image"></i> Take Photos and Videos</li>
+    <li onclick="showCapture()">
+    <i class="fa fa-camera"></i> Take Photos and Videos</li>
      <li><i class="fa fa-image"></i> Gallery</li>
     <li><i class="fa fa-cog"></i> Settings</li>
   </ul>
@@ -134,6 +135,70 @@ body{
       <button class="logout" onclick="logout()">Logout</button>
     </div>
   </div>
+<!-- CAPTURE SECTION -->
+<div id="captureSection" style="display:none; margin-top:30px;">
+
+  <div class="card" style="text-align:center;">
+
+    <h2>Capture Media</h2>
+
+    <div style="display:flex; justify-content:center; gap:40px; margin:30px 0;">
+
+      <!-- PHOTO BUTTON -->
+      <div onclick="startPhotoMode()" style="cursor:pointer;">
+        <div style="
+          width:100px;
+          height:100px;
+          border-radius:50%;
+          background:white;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-size:40px;
+          color:#6366f1;">
+          <i class="fa fa-camera"></i>
+        </div>
+        <p style="margin-top:10px;">Take Photo</p>
+      </div>
+
+      <!-- VIDEO BUTTON -->
+      <div onclick="startVideoMode()" style="cursor:pointer;">
+        <div style="
+          width:100px;
+          height:100px;
+          border-radius:50%;
+          background:white;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          font-size:40px;
+          color:#6366f1;">
+          <i class="fa fa-video"></i>
+        </div>
+        <p style="margin-top:10px;">Record Video</p>
+      </div>
+
+    </div>
+
+    <!-- Camera Preview -->
+    <video id="video" autoplay playsinline 
+      style="width:100%; max-width:500px; border-radius:15px; display:none;">
+    </video>
+
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <div id="preview" style="margin-top:20px;"></div>
+
+    <div style="margin-top:15px;">
+      <button onclick="capturePhoto()">Capture</button>
+      <button onclick="startRecording()">Start Recording</button>
+      <button onclick="stopRecording()">Stop Recording</button>
+      <button onclick="uploadCaptured()">Upload</button>
+    </div>
+
+  </div>
+</div>
+
 
   <div class="cards">
     <div class="card">
