@@ -51,11 +51,12 @@ body{
   background:rgba(255,255,255,0.2);
 }
 
-/* Main Content */
+/* Main */
 .main{
   flex:1;
   padding:30px;
   color:#fff;
+  overflow:auto;
 }
 
 .topbar{
@@ -91,36 +92,34 @@ body{
   box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
-.card h3{
-  margin-bottom:10px;
-}
-
-.logout{
-  padding:8px 15px;
-  background:#fff;
+button{
+  padding:8px 14px;
   border:none;
   border-radius:8px;
   cursor:pointer;
-  font-weight:600;
-  color:#6366f1;
+  margin:5px;
 }
 
-.logout:hover{
-  transform:translateY(-2px);
+.logout{
+  background:#fff;
+  color:#6366f1;
+  font-weight:600;
 }
 </style>
 </head>
+
 <body>
 
 <!-- Sidebar -->
 <div class="sidebar">
   <h2>MyApp</h2>
   <ul>
-    <li><i class="fa fa-home"></i> Dashboard</li>
+    <li onclick="goHome()"><i class="fa fa-home"></i> Dashboard</li>
     <li><i class="fa fa-user"></i> Profile</li>
     <li onclick="showCapture()">
-    <i class="fa fa-camera"></i> Take Photos and Videos</li>
-     <li><i class="fa fa-image"></i> Gallery</li>
+      <i class="fa fa-camera"></i> Take Photos and Videos
+    </li>
+    <li><i class="fa fa-image"></i> Gallery</li>
     <li><i class="fa fa-cog"></i> Settings</li>
   </ul>
 </div>
@@ -131,137 +130,113 @@ body{
   <div class="topbar">
     <h1>Welcome, <span id="userName">User</span> 👋</h1>
     <div class="profile">
-      <img src="https://i.pravatar.cc/150?img=3" alt="profile">
+      <img src="https://i.pravatar.cc/150?img=3">
       <button class="logout" onclick="logout()">Logout</button>
     </div>
   </div>
-<!-- CAPTURE SECTION -->
- <button onclick="goHome()" style="margin-bottom:15px;">
-  ← Back to Dashboard
-</button>
-<div id="captureSection" style="display:none; margin-top:30px;">
 
-  <div class="card" style="text-align:center;">
-
-    <h2>Capture Media</h2>
-
-    <div style="display:flex; justify-content:center; gap:40px; margin:30px 0;">
-
-      <!-- PHOTO BUTTON -->
-      <div onclick="startPhotoMode()" style="cursor:pointer;">
-        <div style="
-          width:100px;
-          height:100px;
-          border-radius:50%;
-          background:white;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          font-size:40px;
-          color:#6366f1;">
-          <i class="fa fa-camera"></i>
-        </div>
-        <p style="margin-top:10px;">Take Photo</p>
+  <!-- DASHBOARD HOME -->
+  <div id="dashboardHome">
+    <div class="cards">
+      <div class="card">
+        <h3>Total Uploads</h3>
+        <p id="uploadsCount">0</p>
       </div>
 
-      <!-- VIDEO BUTTON -->
-      <div onclick="startVideoMode()" style="cursor:pointer;">
-        <div style="
-          width:100px;
-          height:100px;
-          border-radius:50%;
-          background:white;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          font-size:40px;
-          color:#6366f1;">
-          <i class="fa fa-video"></i>
+      <div class="card">
+        <h3>Active Projects</h3>
+        <p>3</p>
+      </div>
+
+      <div class="card">
+        <h3>Storage Used</h3>
+        <p>1.2 GB</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAPTURE SECTION -->
+  <div id="captureSection" style="display:none; margin-top:30px;">
+
+    <button onclick="goHome()">← Back to Dashboard</button>
+
+    <div class="card" style="text-align:center; margin-top:20px;">
+
+      <h2>Capture Media</h2>
+
+      <div style="display:flex; justify-content:center; gap:40px; margin:30px 0;">
+
+        <!-- PHOTO -->
+        <div onclick="startPhotoMode()" style="cursor:pointer;">
+          <div style="width:100px;height:100px;border-radius:50%;background:white;
+          display:flex;align-items:center;justify-content:center;
+          font-size:40px;color:#6366f1;">
+            <i class="fa fa-camera"></i>
+          </div>
+          <p style="margin-top:10px;">Take Photo</p>
         </div>
-        <p style="margin-top:10px;">Record Video</p>
+
+        <!-- VIDEO -->
+        <div onclick="startVideoMode()" style="cursor:pointer;">
+          <div style="width:100px;height:100px;border-radius:50%;background:white;
+          display:flex;align-items:center;justify-content:center;
+          font-size:40px;color:#6366f1;">
+            <i class="fa fa-video"></i>
+          </div>
+          <p style="margin-top:10px;">Record Video</p>
+        </div>
+
+      </div>
+
+      <video id="video" autoplay playsinline
+        style="width:100%; max-width:500px; border-radius:15px; display:none;">
+      </video>
+
+      <canvas id="canvas" style="display:none;"></canvas>
+
+      <div id="preview" style="margin-top:20px;"></div>
+
+      <div style="margin-top:15px;">
+        <button onclick="capturePhoto()">Capture</button>
+        <button onclick="startRecording()">Start Recording</button>
+        <button onclick="stopRecording()">Stop Recording</button>
+        <button onclick="uploadCaptured()">Upload</button>
       </div>
 
     </div>
-
-    <!-- Camera Preview -->
-    <video id="video" autoplay playsinline 
-      style="width:100%; max-width:500px; border-radius:15px; display:none;">
-    </video>
-
-    <canvas id="canvas" style="display:none;"></canvas>
-
-    <div id="preview" style="margin-top:20px;"></div>
-
-    <div style="margin-top:15px;">
-      <button onclick="capturePhoto()">Capture</button>
-      <button onclick="startRecording()">Start Recording</button>
-      <button onclick="stopRecording()">Stop Recording</button>
-      <button onclick="uploadCaptured()">Upload</button>
-    </div>
-
-  </div>
-</div>
-
-<div id="dashboardHome">
-<div class="card">
-  <div class="cards">
-    <div class="card">
-      <h3>Total Uploads</h3>
-      <p id="uploadsCount">0</p>
-    </div>
-
-    <div class="card">
-      <h3>Active Projects</h3>
-      <p>3</p>
-    </div>
-
-    <div class="card">
-      <h3>Storage Used</h3>
-      <p>1.2 GB</p>
-    </div>
   </div>
 
 </div>
-</div>
-  </div>
 
 <script>
-/* Protect dashboard */
+/* Protect Dashboard */
 const token = localStorage.getItem("token");
 if(!token){
   window.location.href = "index.html";
 }
 
-/* Example user name load */
+/* Load user name */
 document.getElementById("userName").innerText =
   localStorage.getItem("userName") || "User";
 
 function logout(){
-  localStorage.removeItem("token");
-  localStorage.removeItem("userName");
+  localStorage.clear();
   window.location.href = "index.html";
 }
 
-function goHome(){
-
-  // Hide capture
-  document.getElementById("captureSection").style.display = "none";
-
-  // Show dashboard stats
-  document.getElementById("dashboardHome").style.display = "block";
-}
-
 function showCapture(){
-
-  
-  // Hide dashboard stats
   document.getElementById("dashboardHome").style.display = "none";
-
-  // Show capture section
   document.getElementById("captureSection").style.display = "block";
 }
 
+function goHome(){
+  document.getElementById("captureSection").style.display = "none";
+  document.getElementById("dashboardHome").style.display = "block";
+}
 </script>
+
+<!-- External Script (Camera + Upload Logic) -->
 <script src="script.js"></script>
+
 </body>
 </html>
