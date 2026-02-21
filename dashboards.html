@@ -136,6 +136,9 @@ body{
     </div>
   </div>
 <!-- CAPTURE SECTION -->
+ <button onclick="goHome()" style="margin-bottom:15px;">
+  ← Back to Dashboard
+</button>
 <div id="captureSection" style="display:none; margin-top:30px;">
 
   <div class="card" style="text-align:center;">
@@ -199,7 +202,8 @@ body{
   </div>
 </div>
 
-
+<div id="dashboardHome">
+<div class="card">
   <div class="cards">
     <div class="card">
       <h3>Total Uploads</h3>
@@ -218,6 +222,8 @@ body{
   </div>
 
 </div>
+</div>
+  </div>
 
 <script>
 /* Protect dashboard */
@@ -236,10 +242,23 @@ function logout(){
   window.location.href = "index.html";
 }
 
+function goHome(){
 
+  // Hide capture
+  document.getElementById("captureSection").style.display = "none";
+
+  // Show dashboard stats
+  document.getElementById("dashboardHome").style.display = "block";
+}
 
 function showCapture(){
-  alert("Working");
+
+  
+  // Hide dashboard stats
+  document.getElementById("dashboardHome").style.display = "none";
+
+  // Show capture section
+  document.getElementById("captureSection").style.display = "block";
 }
 
 </script>
