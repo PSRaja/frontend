@@ -25,16 +25,36 @@ function toggleForm() {
    REGISTER WITH OTP
 ================================ */
 
+
 async function handleRegister() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const otpInput = document.getElementById("otp").value;
+
+  const firstName = document.getElementById("firstName").value.trim();
+  const lastName = document.getElementById("lastName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const otp = document.getElementById("otp")?.value.trim();
+
   const message = document.getElementById("message");
   const otpSection = document.getElementById("otpSection");
   const btn = document.getElementById("registerBtn");
 
-  if (!otpSent) {
-    try {
+  message.innerText = "";
+
+  if (!firstName || !lastName || !email || !password) {
+    message.innerText = "All fields required!";
+    return;
+  }
+
+  try {
+
+    // ======================
+    // STEP 1 → SEND OTP
+    // ======================
+    if (!otpSent) {
+
+      btn.innerText = "Sending...";
+      btn.disabled = true;
+
       const res = await fetch(`${AUTH_URL}/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -43,41 +63,67 @@ async function handleRegister() {
 
       const data = await res.json();
 
-      if (res.ok) {
-        message.innerText = "OTP sent to your email!";
-        otpSection.classList.remove("hidden");
-        btn.innerText = "Verify OTP";
-        otpSent = true;
-      } else {
+      btn.disabled = false;
+
+      if (!res.ok) {
+        btn.innerText = "Create Account";
         message.innerText = data.message || "Failed to send OTP";
+        return;
       }
-    } catch (err) {
-      message.innerText = "Server error!";
+
+      message.innerText = "OTP sent to your email!";
+      otpSection.classList.remove("hidden");
+      btn.innerText = "Verify OTP";
+      otpSent = true;
+
     }
-  } else {
-    try {
+
+    // ======================
+    // STEP 2 → VERIFY + REGISTER
+    // ======================
+    else {
+
+      if (!otp) {
+        message.innerText = "Please enter OTP!";
+        return;
+      }
+
+      btn.innerText = "Verifying...";
+      btn.disabled = true;
+
       const res = await fetch(`${AUTH_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, otp: otpInput })
+        body: JSON.stringify({ firstName, lastName, email, password, otp })
       });
 
       const data = await res.json();
 
-      if (res.ok) {
-        message.innerText = "Registration successful!";
-        otpSent = false;
-        btn.innerText = "Create Account";
-        otpSection.classList.add("hidden");
-      } else {
+      btn.disabled = false;
+
+      if (!res.ok) {
+        btn.innerText = "Verify OTP";
         message.innerText = data.message || "Registration failed";
+        return;
       }
-    } catch (err) {
-      message.innerText = "Server error!";
+
+      message.innerText = "Registration Successful!";
+      btn.innerText = "Create Account";
+      otpSection.classList.add("hidden");
+      otpSent = false;
+
+      setTimeout(() => {
+        toggleForm(); // Switch to login
+      }, 1500);
+
     }
+
+  } catch (err) {
+    console.error(err);
+    btn.disabled = false;
+    message.innerText = "Server error!";
   }
 }
-
 /* ================================
    LOGIN
 ================================ */

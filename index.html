@@ -192,8 +192,13 @@ button:hover{
     <input type="password" id="password" placeholder="Password" required>
     <i class="fa-solid fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
   </div>
+  <div id="otpSection" class="hidden">
+  <div class="input-group">
+    <input type="text" id="otp" placeholder="Enter OTP">
+  </div>
+</div>
 
-  <button onclick="handleRegister()">Create Account</button>
+ <button id="registerBtn" onclick="handleRegister()">Create Account</button>
 
 </div>
 
