@@ -17,17 +17,19 @@
 
 body{
   display:flex;
-  height:100vh;
+  min-height:100vh;
   background:linear-gradient(135deg,#6366f1,#06b6d4);
 }
 
 /* Sidebar */
+
 .sidebar{
   width:240px;
   background:rgba(255,255,255,0.15);
   backdrop-filter:blur(20px);
   color:#fff;
   padding:20px;
+  transition:0.3s;
 }
 
 .sidebar h2{
@@ -52,6 +54,7 @@ body{
 }
 
 /* Main */
+
 .main{
   flex:1;
   padding:30px;
@@ -59,11 +62,14 @@ body{
   overflow:auto;
 }
 
+/* Topbar */
+
 .topbar{
   display:flex;
   justify-content:space-between;
   align-items:center;
   margin-bottom:30px;
+  flex-wrap:wrap;
 }
 
 .profile{
@@ -77,6 +83,8 @@ body{
   border-radius:50%;
   margin-right:10px;
 }
+
+/* Cards */
 
 .cards{
   display:grid;
@@ -92,6 +100,8 @@ body{
   box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
+/* Buttons */
+
 button{
   padding:8px 14px;
   border:none;
@@ -104,6 +114,76 @@ button{
   background:#fff;
   color:#6366f1;
   font-weight:600;
+}
+
+/* Capture icons responsive */
+
+.capture-icons{
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  margin:30px 0;
+  flex-wrap:wrap;
+}
+
+/* VIDEO */
+
+video{
+  width:100%;
+  max-width:500px;
+  border-radius:15px;
+}
+
+/* --------------------- */
+/* MOBILE RESPONSIVE */
+/* --------------------- */
+
+@media (max-width:900px){
+
+body{
+  flex-direction:column;
+}
+
+.sidebar{
+  width:100%;
+}
+
+.sidebar ul{
+  display:flex;
+  justify-content:space-around;
+  flex-wrap:wrap;
+}
+
+.sidebar ul li{
+  margin:5px;
+}
+
+.main{
+  padding:20px;
+}
+
+.topbar h1{
+  font-size:20px;
+}
+
+.cards{
+  grid-template-columns:1fr;
+}
+
+}
+
+@media (max-width:500px){
+
+.profile img{
+  width:32px;
+  height:32px;
+}
+
+button{
+  padding:6px 10px;
+  font-size:12px;
+}
+
 }
 </style>
 </head>
